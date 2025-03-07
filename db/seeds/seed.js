@@ -24,7 +24,7 @@ const  seed = ({ topicData, userData, articleData, commentData }) => {
           author  VARCHAR(100) REFERENCES users(username),
           body TEXT,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          votes INT,
+          votes INT DEFAULT 0,
           article_img_url VARCHAR(1000)
       )`)})
       .then(()=>{
@@ -32,7 +32,7 @@ const  seed = ({ topicData, userData, articleData, commentData }) => {
           comment_id SERIAL PRIMARY KEY,
           article_id INT REFERENCES articles(article_id),
           body TEXT,
-          votes INT,
+          votes INT DEFAULT 0,
           author VARCHAR(100) REFERENCES users(username),
           created_at TIMESTAMP
       )`)})
@@ -77,19 +77,30 @@ const  seed = ({ topicData, userData, articleData, commentData }) => {
         VALUES %L RETURNING *`, formattedArticles)
         return db.query(sqlString)
       })
-      .then(()=>{
+      .then(({rows})=>{
+        
+        const articleTitleIds = {};
+        rows.forEach((article)=>{
+          articleTitleIds[article.title] = article.article_id
+        })
+        console.log(articleTitleIds)
         const formattedComments = commentData.map(
           (commentsData)=>{
             const convertTime = convertTimestampToDate(commentsData)
+            const articleId = articleTitleIds[commentsData.article_title]
           return [
+            articleId,
             commentsData.body, 
             commentsData.votes, 
             commentsData.author, 
             convertTime.created_at
           ]
         })
-        const sqlString = format(`INSERT INTO comments (body, votes, author, created_at) VALUES %L RETURNING *`, formattedComments)
+        const sqlString = format(`INSERT INTO comments (article_id, body, votes, author, created_at) VALUES %L RETURNING *`, formattedComments)
         return db.query(sqlString)
+      })
+      .then(({rows})=>{
+        console.log(rows)
       })   
           
 };
