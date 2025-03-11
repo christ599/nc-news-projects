@@ -25,3 +25,28 @@ describe("GET /api", () => {
       });
   });
 });
+describe("GET /api/topics", () => {
+  test("200: Responds with an array of correctly formatted topics objects", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({body}) => {
+        expect(body.topics.length).toBe(3);
+        body.topics.forEach((topic)=>{
+          console.log(topic)
+        expect(typeof topic.slug).toBe("string")
+        expect(typeof topic.description).toBe("string")
+        })
+      });
+  });
+});
+describe("GET /api", () => {
+  test("404: Responds with a message when sending a non existing endpoint", () => {
+    return request(app)
+      .get("/api/christianIsFabulous")
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe("path not valid");
+      });
+  });
+});
