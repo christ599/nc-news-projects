@@ -83,7 +83,7 @@ const  seed = ({ topicData, userData, articleData, commentData }) => {
         rows.forEach((article)=>{
           articleTitleIds[article.title] = article.article_id
         })
-        console.log(articleTitleIds)
+      
         const formattedComments = commentData.map(
           (commentsData)=>{
             const convertTime = convertTimestampToDate(commentsData)
@@ -99,9 +99,7 @@ const  seed = ({ topicData, userData, articleData, commentData }) => {
         const sqlString = format(`INSERT INTO comments (article_id, body, votes, author, created_at) VALUES %L RETURNING *`, formattedComments)
         return db.query(sqlString)
       })
-      .then(({rows})=>{
-        console.log(rows)
-      })   
+      
           
 };
 module.exports = seed;
