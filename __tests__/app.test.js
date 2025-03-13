@@ -39,7 +39,7 @@ describe("GET /api/topics", () => {
       });
   });
 });
-describe("GET /api", () => {
+describe("GET /api/topics", () => {
   test("404: Responds with a message when sending a non existing endpoint", () => {
     return request(app)
       .get("/api/christianIsFabulous")
