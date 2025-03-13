@@ -82,3 +82,33 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 });
+describe("GET /api/articles", () => {
+  test("200: Should respond with an array of all articles which include correct properties (including comment_count but excluding body).", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({body}) => {
+        const { article } = body
+      expect(article.length).toBe(13);
+          article.forEach((article) => {
+            expect(article).toMatchObject({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String)
+            });
+          });
+      });
+  });
+  test("404: Responds with a message if the endpoint does not exist", () => {
+    return request(app)
+      .get("/api/christian")
+      .expect(404)
+      .then(({body}) => {
+        expect(body.msg).toBe("path not valid");
+      });
+});
+});
