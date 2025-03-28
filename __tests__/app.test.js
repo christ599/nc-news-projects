@@ -158,3 +158,83 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: Should add a comment and respond with 201 and the new comment", () => {
+
+    const newComment = {
+      body: "this is how we do it",
+      username: "butter_bridge"
+    }
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({body}) => {
+        console.log(body,"body")
+        // const {comment_id, article_id, body, vote, author, created_at } = body.comments;
+        const {comments} = body
+        expect(comments).toMatchObject(
+          {
+            comment_id: 19,
+            article_id: 1,
+            body: "this is how we do it",
+            votes: 0,
+            author: "butter_bridge",
+            created_at: expect.any(String)
+          }
+        )
+        /*expect(comment_id).toBe(3)
+        expect(article_id).toBe(1)
+        expect(body).toBe("this is how we do it")
+        expect(vote).toBe(3)
+        expect(author).toBe("")
+        expect(created_at).toBe("")*/
+      });
+  });
+  test("400: Should respond with 400 if request body is missing required fields", () => {
+    return request(app)
+      .post("/api/articles/article_id/comments")
+      .expect(400)
+      .send({
+            username: "butter_bridge"
+      })
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("400: Should respond with 404 if article_id does not exist", () => {
+    return request(app)
+      .post("/api/articles/87/comments")
+      .expect(400)
+      .send({
+            username: "butter_bridge",
+            body: "this is how we do it",
+      })
+      .then(({body}) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+  test("400: Should respond with 400 if article_id is not a number.", () => {
+    return request(app)
+      .post("/api/articles/avocado/comments")
+      .expect(400)
+      .send({
+            username: "butter_bridge"
+      })
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request");
+     });
+  });  
+  test("400: Should respond with 404 if username does not exist in users table..", () => {
+    return request(app)
+      .post("/api/articles/:articles_id/comments")
+      .expect(400)
+      .send({
+            username: "butter_bridge"
+      })
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request");
+     });
+  });    
+});

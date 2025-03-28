@@ -34,7 +34,7 @@ const  seed = ({ topicData, userData, articleData, commentData }) => {
           body TEXT,
           votes INT DEFAULT 0,
           author VARCHAR(100) REFERENCES users(username),
-          created_at TIMESTAMP
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`)})
       .then(()=>{
         const formattedTopics = topicData.map((topicsData)=>{

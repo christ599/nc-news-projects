@@ -4,6 +4,7 @@
   "description": "bc-nc-news",
   "main": "listen.js",
   "scripts": {
+    "seed-prod" : "NODE_ENV=production npm run seed-dev",
     "setup-dbs": "psql -f ./db/setup-dbs.sql",
     "seed-dev": "node ./db/seeds/run-seed.js",
     "query-dev": "node ./db/seeds/query.js",
